@@ -10,6 +10,7 @@ public class Manager extends JFrame {
     private JTextField nameField;
     private JTextField moneyField;
     private JTextField searchField;
+    private JTextField resultField;
     private JButton saveButton, searchButton, editButton, deleteButton, makeFileButton, resultButton;
     private JButton sortNameAscButton, sortNameDescButton, sortMoneyAscButton, sortMoneyDescButton;
     private JTextArea displayArea;
@@ -70,27 +71,35 @@ public class Manager extends JFrame {
         sortPanel.add(sortMoneyAscButton, gbc);
         sortMoneyDescButton = new JButton("▼");
         sortMoneyDescButton.setPreferredSize(new Dimension(45, 20));
-        
         gbc.gridx = 2;
         gbc.gridy = 1;
-        
         sortPanel.add(sortMoneyDescButton, gbc);
-        centerPanel.add(sortPanel, BorderLayout.EAST);
-        JPanel editPanel = new JPanel(new GridLayout(4, 1));
+
+        gbc.gridx = 0;
+        gbc.gridy = 2;
+        gbc.gridwidth = 3;
         editButton = new JButton("Edit");
-        editPanel.add(editButton);
+        sortPanel.add(editButton, gbc);
+        gbc.gridy = 3;
         deleteButton = new JButton("Delete");
-        editPanel.add(deleteButton);
+        sortPanel.add(deleteButton, gbc);
+        gbc.gridy = 4;
         makeFileButton = new JButton("Making File");
-        editPanel.add(makeFileButton);
+        sortPanel.add(makeFileButton, gbc);
+        gbc.gridy = 5;
         resultButton = new JButton("Result");
-        editPanel.add(resultButton);
-        centerPanel.add(editPanel, BorderLayout.SOUTH);
-        
+        sortPanel.add(resultButton, gbc);
+        gbc.gridx = 3;
+        resultField = new JTextField(5);
+        sortPanel.add(resultField, gbc);
+
+        centerPanel.add(sortPanel, BorderLayout.EAST);
+
         add(inputPanel, BorderLayout.NORTH);
         add(centerPanel, BorderLayout.CENTER);
 
         infoList = new ArrayList<>();
+
         saveButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 saveInfo();
@@ -156,7 +165,7 @@ public class Manager extends JFrame {
         String name = nameField.getText();
         int money = Integer.parseInt(moneyField.getText());
         infoList.add(new Info(name, money));
-        displayArea.append("Saved: " + name + " - " + money + "\n");
+        displayArea.append(name + "-" + money + "\n");
         nameField.setText("");
         moneyField.setText("");
     }
@@ -166,7 +175,7 @@ public class Manager extends JFrame {
         displayArea.setText("");
         for (Info info : infoList) {
             if (info.getName().equals(name)) {
-                displayArea.append("Found: " + info.getName() + " - " + info.getMoney() + "\n");
+                displayArea.append("search:" + info.getName() + "-" + info.getMoney() + "\n");
             }
         }
     }
@@ -177,9 +186,9 @@ public class Manager extends JFrame {
         } else {
             Collections.sort(infoList, Comparator.comparing(Info::getName).reversed());
         }
-        displayArea.setText("Sorted by Name:\n");
+        displayArea.setText("");
         for (Info info : infoList) {
-            displayArea.append(info.getName() + " - " + info.getMoney() + "\n");
+            displayArea.append(info.getName() + "-" + info.getMoney() + "\n");
         }
     }
 
@@ -189,9 +198,9 @@ public class Manager extends JFrame {
         } else {
             Collections.sort(infoList, Comparator.comparingInt(Info::getMoney).reversed());
         }
-        displayArea.setText("Sorted by Money:\n");
+        displayArea.setText("");
         for (Info info : infoList) {
-            displayArea.append(info.getName() + " - " + info.getMoney() + "\n");
+            displayArea.append(info.getName() + "-" + info.getMoney() + "\n");
         }
     }
 
@@ -201,7 +210,7 @@ public class Manager extends JFrame {
         for (Info info : infoList) {
             if (info.getName().equals(name)) {
                 info.setMoney(newMoney);
-                displayArea.append("Edited: " + name + " - " + newMoney + "\n");
+                displayArea.append(name + "-" + newMoney + "\n");
             }
         }
     }
@@ -209,16 +218,15 @@ public class Manager extends JFrame {
     private void deleteInfo() {
         String name = nameField.getText();
         infoList.removeIf(info -> info.getName().equals(name));
-        displayArea.append("Deleted: " + name + "\n");
     }
 
     private void saveToFile() {
-        displayArea.append("Data saved to file.\n");
+        displayArea.append("Create file.");
     }
 
     private void calculateTotal() {
         int total = infoList.stream().mapToInt(Info::getMoney).sum();
-        displayArea.append("Total Money: " + total + "\n");
+        resultField.setText(String.valueOf(total));
     }
 
     public static void main(String[] args) {
@@ -229,5 +237,4 @@ public class Manager extends JFrame {
         });
     }
 }
-
 
